@@ -1,3 +1,0 @@
-import emoji
-
-print(emoji.emojize("Instalado no Mac com sucesso! :apple: :sparkles:"))
