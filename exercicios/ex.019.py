@@ -1,4 +1,4 @@
-from math import sin,cos,tan,radians,tan
+from math import sin,cos,tan,radians
 an = float(input("Digite o ângulo que você deseja: "))
 seno = sin(radians(an))
 cosseno = cos(radians(an))
