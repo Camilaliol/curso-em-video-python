@@ -1,7 +1,7 @@
 aluno = str(input( "Escreva o nome do aluno: "))
 nota = float(input("Digite a nota do Aluno: "))
 
-while nota < 0 or nota > 20:
+while nota < 0 or nota > 20:#while faz repitir nota varias vezes ate esta correto
     print("Nota inválida! Digite um valor de 0 a 20.")
     nota= float(input("Digite a nota do aluno :"))
 

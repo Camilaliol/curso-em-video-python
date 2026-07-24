@@ -1,5 +1,5 @@
 n = int(input("digite um numero: "))
-if n % 2==0:
+if n % 2==0: # os dois == representa o resto da divisao 
     print(f"o numero {n} é par ")
 else:
     print(f"O numero {n} é impar")    
