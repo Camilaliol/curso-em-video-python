@@ -1,4 +1,4 @@
-aluno = str(input( "Escreva o nome do aluno: "))
+aluno = str(input( "Escreva o nome do aluno: ")) #str é a definição da variavel 
 nota = float(input("Digite a nota do Aluno: "))
 
 while nota < 0 or nota > 20:#while faz repitir nota varias vezes ate esta correto
