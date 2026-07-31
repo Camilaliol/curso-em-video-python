@@ -1,12 +1,15 @@
-n1= int(input("Digite um numero:"))
-n2= int(input("Digite um numero:"))
-n3= int(input("Digite um numero: "))
+# Pede três números ao utilizador e converte cada resposta para inteiro.
+n1 = int(input("Digite um numero: "))
+n2 = int(input("Digite um numero: "))
+n3 = int(input("Digite um numero: "))
 
-contador = 1    
-soma = [n1,n2,n3]
+# Começamos a soma em zero.
+soma = 0
 
-while contador <= n:
-    soma = + contador
-    if contador <n:
-        contador = contador +1
-print("=", soma )
+# Adicionamos cada número à soma anterior.
+soma = soma + n1
+soma = soma + n2
+soma = soma + n3
+
+# Mostra o resultado final.
+print("=", soma)
