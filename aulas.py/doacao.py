@@ -1,12 +1,9 @@
-from xmlrpc.client import boolean
-
-
 print("|----------------------------------|")
 print("|             DOAÇÕES              |")
 print("|----------------------------------|")
 print("|       FAÇA SUA DOAÇÃO            |")
 print("|----------------------------------|")
-print("|             DOAÇÕES              |")
+print("|             DOAÇÕES              |")   
 print("|                                  |")
 print("|(1) PARA DOAR 10€                 |")
 print("|(2) PARA DOAR 20€                 |")
@@ -25,9 +22,9 @@ match opcao:
     case 3:
         doar = 50
     case 4:
-        doar = boolean(input("Qual o valor voê gostaria de doar:"))
+        doar = (input("Qual o valor voê gostaria de doar:"))
     case 5:
         doar = 0
 
-input(f"Você doou {doar},00€ !,muito Obrigada por sua doação")
+input(f"Você doou {doar},00€ !. Muito Obrigada por sua doação")
 
