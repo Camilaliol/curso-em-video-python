@@ -68,7 +68,7 @@ while rodando:
     bonus_ativo = False
     tempo_bonus_restante = 0
 
-    game_over = False # Controle se o jogador perdeu nesta codada
+    game_over = True # Controle se o jogador perdeu nesta codada
 
     #Loop da partida inicial
     while not game_over and rodando:        
@@ -116,7 +116,7 @@ while rodando:
     #detectar as paredes
         if cobra_x >= LARGURA or cobra_x < 0 or cobra_y >= ALTURA or cobra_y < 0:
             print("BAREU NA PAREDE! 💥 GAME OVER! 💥 ") 
-            rodando = False   
+            rodando = False 
     
        
 
@@ -132,12 +132,24 @@ while rodando:
                 comida_bonus_y = random.randrange(0, ALTURA - TAMANHO_BLOCO, TAMANHO_BLOCO)
                 bonus_ativo = True
                 tempo_bonus_restante = 50 # 5a frames a 10 FPS
-           # calculo do nivel
-           #Se pontos (comprimento -1) for 0,1 ou 2 -> Nivel 1
-           #Se pontos for 3,4 ou 5 -> Nivel 2(3 // 3 = 1 +1 = 2)
+                # calculo do nivel
+                #Se pontos (comprimento -1) for 0,1 ou 2 -> Nivel 1
+                 #Se pontos for 3,4 ou 5 -> Nivel 2(3 // 3 = 1 +1 = 2)
             pontos_atuais = comprimento_cobra -1
             nivel_atual = (pontos_atuais // 5) + 1
             print(f"Comi ! Pontos : {pontos_atuais} | Nível: {nivel_atual}")
+        
+        # LO9GICA DE TEMPO E COMPORTAMENTO DA MAÇÃ DOURADA
+        if bonus_ativo:
+            tempo_bonus_restante -= 1
+            if tempo_bonus_restante <=0:
+                 bonus_ativo = False #Se o tempo acabar ela some
+
+            if cobra_x == comida_bonus_x and cobra_y == comida_bonus_y:
+                comprimento_cobra += 3 # Ganha +3 blocos de uma so vez.
+                bonus_ativo = False
+                print("💥 MAÇÃ DOURADA! +3 PONTOS! 💥")    
+        
         tela.fill(PRETO)
 
     #Desenho da comida (retândulo vermelho)
@@ -164,5 +176,32 @@ while rodando:
         # NIVEL 2: 10 +(1 * 2) = 12 FPS
         # NIVEL 3: 10 +(2 * 2) = 14 FPS
         relogio.tick(velocidade_base + (nivel_atual - 1) * 2) 
+
+        #    TELA DE GAME OVER GRANDE 
+    while game_over and rodando:
+        tela.fill(PRETO)
+
+        texto_go = fonte_game_over.render("💥 GAME OVER! 💥", True, VERMELHO)   
+        texto_pontos = fonte_subtitulo.render(f"Você fez{comprimento_cobra - 1} pontos! (NIvel{nivel_atual})", True, BRANCO) 
+        texto_opcoes = fonte_subtitulo.render("Pressione [C] para Jogar de NOvo ou [Q] para Sair",True, BRANCO)
+
+        tela.blit(texto_go, [LARGURA / 2 - 110, ALTURA / 2 - 60])
+        tela.blit(texto_pontos, [LARGURA / 2 - 130, ALTURA / 2 - 10])
+        tela.blit(texto_opcoes, [LARGURA / 2 -210, ALTURA / 2 + 30])
+
+        pygame.display.update()
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                rodando = False
+                game_over = False
+
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_q: # O Q serve para fechar o jogo
+                    rodando = False
+                    game_over = False
+
+                if evento.key == pygame.K_c: # O C serve para reiniciar do zero
+                    game_over = False        
 
 pygame.quit()    
