@@ -3,7 +3,6 @@ import pygame
 
 #Inicia a ferramente do pygame
 pygame.init()
-pygame.mixer.init() #Sistema para o audio funcionar
 
 #Configura as dimençoes da nossa arena
 LARGURA = 600
@@ -18,16 +17,6 @@ VERMELHO = (255,0,0)
 BRANCO = (255,255,255)
 DOURADO = (255,215,0)
 
-#Carregamento dos sons
-try:
-    som_comer = pygame.mixer.Sound("comer.wav")
-    som_game_over = pygame.mixer.Sound("game_over.wav")
-
-except pygame.error:
-    #Caso os fixeiros não existirem na pasta, o jogo usa o modo de segurança (sem som) em vez de dar erro
-    print("Aviso: Ficheiros de som não encontrado. O jogo vai correr em modo silencioso.")
-    som_comer = None
-    som_game_over = None
 
 #Tamanho E VELOCIDADE da nossa cobrinha 
 TAMANHO_BLOCO = 20
