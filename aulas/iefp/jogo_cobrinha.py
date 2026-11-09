@@ -3,12 +3,13 @@ import pygame
 
 #Inicia a ferramente do pygame
 pygame.init()
+pygame.mixer.init() #Sistema para o audio funcionar
 
 #Configura as dimençoes da nossa arena
 LARGURA = 600
 ALTURA = 400
 tela = pygame.display.set_mode((LARGURA,ALTURA))
-pygame.display.set_caption ("JOGO DA COBRINHA")
+pygame.display.set_caption ("<<<<<<<<< JOGO DA COBRINHA >>>>>>>>>>")
 
 #Definindo as cores (padrão RGB)
 PRETO = (0,0,0)
@@ -16,6 +17,17 @@ VERDE = (0,255,0)
 VERMELHO = (255,0,0)
 BRANCO = (255,255,255)
 DOURADO = (255,215,0)
+
+#Carregamento dos sons
+try:
+    som_comer = pygame.mixer.Sound("comer.wav")
+    som_game_over = pygame.mixer.Sound("game_over.wav")
+
+except pygame.error:
+    #Caso os fixeiros não existirem na pasta, o jogo usa o modo de segurança (sem som) em vez de dar erro
+    print("Aviso: Ficheiros de som não encontrado. O jogo vai correr em modo silencioso.")
+    som_comer = None
+    som_game_over = None
 
 #Tamanho E VELOCIDADE da nossa cobrinha 
 TAMANHO_BLOCO = 20
@@ -41,7 +53,7 @@ fonte_subtitulo = pygame.font.SysFont("arial", 20, bold=True)
 #Criando a funçao Placar
 def mostrar_placar(pontos):
     #Criando a imagem do texto
-    texto = fonte_placar.render(f"Pontos: {pontos}", True, BRANCO)
+    texto = fonte_placar.render(f"Pontos: {pontos}" , True, BRANCO)
     #Desenha o texto na cordenadas x=10, y=10 (canto superior esquerdo)
     tela.blit(texto,[10,10])
 
@@ -68,7 +80,7 @@ while rodando:
     bonus_ativo = False
     tempo_bonus_restante = 0
 
-    game_over = True # Controle se o jogador perdeu nesta codada
+    game_over = False # Controle se o jogador perdeu nesta codada
 
     #Loop da partida inicial
     while not game_over and rodando:        
@@ -79,19 +91,19 @@ while rodando:
             #Se o jogador apertar uma tecla:
             if evento.type == pygame.KEYDOWN:
             
-                if evento.key == pygame.K_LEFT:
+                if evento.key == pygame.K_LEFT and velocidade_x == 0:
                     velocidade_x = -TAMANHO_BLOCO
                     velocidade_y = 0
 
-                elif evento.key == pygame.K_RIGHT:
+                elif evento.key == pygame.K_RIGHT and velocidade_x == 0:
                     velocidade_x = TAMANHO_BLOCO
                     velocidade_y = 0
 
-                elif evento.key == pygame.K_UP:
+                elif evento.key == pygame.K_UP and velocidade_x == 0:
                         velocidade_y = -TAMANHO_BLOCO
                         velocidade_x = 0
 
-                elif evento.key == pygame.K_DOWN:
+                elif evento.key == pygame.K_DOWN and velocidade_x == 0:
                     velocidade_y = TAMANHO_BLOCO
                     velocidade_x = 0
 
@@ -111,12 +123,12 @@ while rodando:
         for segmento in cobra_corpo[:-1 ]: #Olha para todos os segmentos, exceto a cabeça 
             if segmento == cabeca and (velocidade_x != 0 or velocidade_y !=0):
                 print("BATEU NO PROPRIO CORPO! 💥 GAME OVER! 💥")
-                rodando = False
+                game_over = True
 
     #detectar as paredes
         if cobra_x >= LARGURA or cobra_x < 0 or cobra_y >= ALTURA or cobra_y < 0:
             print("BAREU NA PAREDE! 💥 GAME OVER! 💥 ") 
-            rodando = False 
+            game_over = True
     
        
 
@@ -126,9 +138,9 @@ while rodando:
             comida_y = random.randrange(0, ALTURA - TAMANHO_BLOCO, TAMANHO_BLOCO)
             comprimento_cobra += 1
 
-            #  SORTEIO DA MAÇA DOURDA
+     #  SORTEIO DA MAÇA DOURDA
             if not bonus_ativo and random.random() < 0.20:
-                comida_bonus_x = random.randrange(0, ALTURA - TAMANHO_BLOCO, TAMANHO_BLOCO)
+                comida_bonus_x = random.randrange(0, LARGURA - TAMANHO_BLOCO, TAMANHO_BLOCO)
                 comida_bonus_y = random.randrange(0, ALTURA - TAMANHO_BLOCO, TAMANHO_BLOCO)
                 bonus_ativo = True
                 tempo_bonus_restante = 50 # 5a frames a 10 FPS
@@ -155,13 +167,14 @@ while rodando:
     #Desenho da comida (retândulo vermelho)
         pygame.draw.rect(tela, VERMELHO, [comida_x, comida_y, TAMANHO_BLOCO, TAMANHO_BLOCO])
 
+        if bonus_ativo:
+            pygame.draw.rect(tela, DOURADO, [comida_bonus_x, comida_bonus_y, TAMANHO_BLOCO, TAMANHO_BLOCO])
     #Desenha todos os segmentos da cobra
         for indice,segmento in enumerate(cobra_corpo) :
             if indice == len (cobra_corpo) -1:
                 #Mudando a cor da cabeça
                 COR_CABECA = (0,180,0) 
-                pygame.draw.rect(tela,VERDE, [segmento[0], segmento[1], TAMANHO_BLOCO, TAMANHO_BLOCO])
-        
+                pygame.draw.rect(tela, COR_CABECA, [segmento[0], segmento[1], TAMANHO_BLOCO, TAMANHO_BLOCO])
             else:
                 # Configurando a cor e tamanho do corpo
                 pygame.draw.rect(tela, VERDE, [segmento[0] + 1, segmento[1] + 1, TAMANHO_BLOCO - 2, TAMANHO_BLOCO - 2])            
@@ -182,8 +195,8 @@ while rodando:
         tela.fill(PRETO)
 
         texto_go = fonte_game_over.render("💥 GAME OVER! 💥", True, VERMELHO)   
-        texto_pontos = fonte_subtitulo.render(f"Você fez{comprimento_cobra - 1} pontos! (NIvel{nivel_atual})", True, BRANCO) 
-        texto_opcoes = fonte_subtitulo.render("Pressione [C] para Jogar de NOvo ou [Q] para Sair",True, BRANCO)
+        texto_pontos = fonte_subtitulo.render(f"Você fez {comprimento_cobra - 1} pontos! (Nivel {nivel_atual}) ", True, BRANCO) 
+        texto_opcoes = fonte_subtitulo.render("Pressione [C] para Jogar de Novo ou [Q] para Sair",True, BRANCO)
 
         tela.blit(texto_go, [LARGURA / 2 - 110, ALTURA / 2 - 60])
         tela.blit(texto_pontos, [LARGURA / 2 - 130, ALTURA / 2 - 10])
